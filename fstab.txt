@@ -1,0 +1,1 @@
+//192.168.0.9/c$/ /mnt/cifs cifs credentials=/home/.smbcredentials,iocharset=utf8 0 0

@@ -7,6 +7,12 @@ set -m
 freshclam -d &
 clamd &
 
+# start clamscan
+mount -a
+if ls /mnt/cifs then
+	clamscan -ir /mnt/cifs
+fi
+
 # recognize PIDs
 pidlist=`jobs -p`
 
@@ -15,7 +21,7 @@ latest_exit=0
 
 # define shutdown helper
 function shutdown() {
-    trap "" SUBS
+    trap "" SIGINT
 
     for single in $pidlist; do
         if ! kill -0 $pidlist 2>/dev/null; then
@@ -28,7 +34,7 @@ function shutdown() {
 }
 
 # run shutdown
-trap terminate SUBS
+trap shutdown SIGINT
 wait
 
 # return received result

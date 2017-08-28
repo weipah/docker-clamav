@@ -10,12 +10,15 @@ RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-fr
     echo "deb http://security.debian.org/ $DEBIAN_VERSION/updates main contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -qq \
+		cifs-utils \
+		clamav \
         clamav-daemon \
         clamav-freshclam \
         libclamunrar7 \
         wget && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+	mkdir /mnt/cifs
 
 # initial update of av databases
 RUN wget -O /var/lib/clamav/main.cvd http://database.clamav.net/main.cvd && \
@@ -38,6 +41,10 @@ VOLUME ["/var/lib/clamav"]
 
 # port provision
 EXPOSE 3310
+
+# fstab file
+COPY fstab.txt /etc/fstab
+COPY smbcredentials.txt /home/.smbcredentials
 
 # av daemon bootstrapping
 ADD bootstrap.sh /
